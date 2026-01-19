@@ -3,11 +3,11 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 
-# Email configuration
-EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', 'za9152361@gmail.com')
-EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', 'sgohmfsiomkucobx')
-SMTP_SERVER = 'smtp.gmail.com'
-SMTP_PORT = 587
+# Email configuration - MUST be set via environment variables
+EMAIL_ADDRESS = os.environ.get('EMAIL_ADDRESS', '')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD', '')
+SMTP_SERVER = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+SMTP_PORT = int(os.environ.get('SMTP_PORT', 587))
 
 
 def send_password_reset_email(user_email, username, reset_token, base_url='http://localhost:5000'):
