@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CulinaryVerse</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <h1>CulinaryVerse</h1>
+            <ul>
+                <li><a href="#" onclick="showHome()">Home</a></li>
+                <li><a href="#" onclick="showRecipes()">Recipes</a></li>
+                <li id="add-recipe-link" class="hidden"><a href="#" onclick="showModal('add-recipe-modal')">Add
+                        Recipe</a></li>
+                <li id="dashboard-link" class="hidden"><a href="#" onclick="showDashboard()">Dashboard</a></li>
+                <li id="admin-link" class="hidden"><a href="#" onclick="showAdminDashboard()">Admin</a></li>
+            </ul>
+            <div id="auth-buttons-guest">
+                <button class="btn btn-primary" onclick="showLogin()">Login</button>
+                <button class="btn btn-primary" onclick="showRegister()">Register</button>
+            </div>
+            <div id="auth-buttons-user" class="hidden">
+                <span id="user-welcome"></span>
+                <button class="btn btn-secondary" onclick="logout()">Logout</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home-section">
+            <div class="hero">
+                <h2>Discover Culinary Magic</h2>
+                <p>Share your culinary creations and explore recipes from around the universe</p>
+                <button class="btn btn-primary" onclick="showRecipes()">Explore Recipes</button>
+            </div>
+
+            <div class="search-container">
+                <h3>Find Your Perfect Recipe</h3>
+                <form id="search-form">
+                    <div>
+                        <label for="search-query">Search</label>
+                        <input type="text" id="search-query" placeholder="Search recipes...">
+                    </div>
+                    <div>
+                        <label for="category-filter">Category</label>
+                        <select id="category-filter" multiple size="5">
+                            <option value="">All Categories</option>
+                        </select>
+                        <small class="filter-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple</small>
+                    </div>
+                    <div>
+                        <label for="min-cooking-time">Min Cooking Time (min)</label>
+                        <input type="number" id="min-cooking-time" placeholder="Min Cooking Time (min)">
+                    </div>
+                    <div>
+                        <label for="max-cooking-time">Max Cooking Time (min)</label>
+                        <input type="number" id="max-cooking-time" placeholder="Max Cooking Time (min)">
+                    </div>
+                    <div>
+                        <label for="min-rating-filter">Minimum Rating</label>
+                        <select id="min-rating-filter">
+                            <option value="">Any Rating</option>
+                            <option value="4.5">4.5+ Stars</option>
+                            <option value="4.0">4.0+ Stars</option>
+                            <option value="3.5">3.5+ Stars</option>
+                            <option value="3.0">3.0+ Stars</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="author-filter">Author</label>
+                        <input type="text" id="author-filter" placeholder="Author">
+                    </div>
+                    <div>
+                        <label for="sort-by">Sort By</label>
+                        <select id="sort-by">
+                            <option value="created_at">Newest First</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="cooking_time">Cooking Time (shortest first)</option>
+                            <option value="title">Alphabetical (A-Z)</option>
+                        </select>
+                    </div>
+                    <div class="quick-filters">
+                        <button type="button" class="btn btn-secondary" onclick="quickFilter('quick')">Quick & Easy (≤30
+                            min)</button>
+                        <button type="button" class="btn btn-secondary" onclick="quickFilter('high_rated')">Highly Rated
+                            (4+)</button>
+                        <button type="button" class="btn btn-secondary"
+                            onclick="quickFilter('vegetarian')">Vegetarian</button>
+                        <button type="button" class="btn btn-secondary" onclick="quickFilter('vegan')">Vegan</button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary">Search Recipes</button>
+                        <button type="button" class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
+                        <button type="button" class="btn btn-secondary" onclick="showTrending()">Show Trending</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="categories-section">
+                <h3>Recipe Categories</h3>
+                <div id="categories-grid"></div>
+            </div>
+        </section>
+
+        <section id="recipes-section" class="hidden">
+            <h2>All Recipes</h2>
+            <div class="search-container">
+                <form id="browse-search-form">
+                    <div>
+                        <label for="browse-category">Category</label>
+                        <select id="browse-category" multiple size="5">
+                            <option value="">All Categories</option>
+                        </select>
+                        <small class="filter-hint">Hold Ctrl (Windows) or Cmd (Mac) to select multiple</small>
+                    </div>
+                    <div>
+                        <label for="browse-max-cooking-time">Max Cooking Time</label>
+                        <input type="number" id="browse-max-cooking-time" placeholder="Max Cooking Time">
+                    </div>
+                    <div>
+                        <label for="browse-sort-by">Sort By</label>
+                        <select id="browse-sort-by">
+                            <option value="created_at">Newest First</option>
+                            <option value="rating">Highest Rated</option>
+                            <option value="cooking_time">Cooking Time (shortest first)</option>
+                            <option value="title">Alphabetical (A-Z)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </form>
+            </div>
+            <div id="recipes-grid"></div>
+        </section>
+
+        <section id="dashboard-section" class="hidden">
+            <h2>Dashboard</h2>
+            <nav class="dashboard-nav">
+                <button class="btn btn-primary" onclick="showMyRecipes()">My Recipes</button>
+                <button class="btn btn-primary" onclick="showFavorites()">Favorites</button>
+            </nav>
+            <div id="dashboard-content"></div>
+        </section>
+
+        <section id="admin-section" class="hidden">
+            <h2>Admin Dashboard</h2>
+            <nav class="dashboard-nav">
+                <button class="btn btn-primary" onclick="loadAdminStats()">Stats</button>
+                <button class="btn btn-primary" onclick="showPendingRecipes()">Pending Recipes</button>
+                <button class="btn btn-primary" onclick="showUsers()">Users</button>
+                <button class="btn btn-primary" onclick="showAdminCategories()">Categories</button>
+                <button class="btn btn-primary" onclick="showPasswordResets()">Password Resets</button>
+            </nav>
+            <div id="admin-content"></div>
+        </section>
+
+        <section id="about-section" class="hidden">
+            <h2>About Us</h2>
+            <p>CulinaryVerse is a community-driven platform for sharing and discovering amazing recipes from around the
+                world. Join our community of food enthusiasts and share your culinary creations with fellow cooking
+                lovers.</p>
+            <h3>Our Mission</h3>
+            <p>To connect people through the universal language of food and make cooking accessible to everyone.</p>
+        </section>
+
+        <section id="terms-section" class="hidden">
+            <h2>Terms and Conditions</h2>
+            <p>By using CulinaryVerse, you agree to:</p>
+            <ul>
+                <li>Share recipes responsibly and respect other users' content</li>
+                <li>Provide accurate information in your recipe submissions</li>
+                <li>Be respectful in your interactions with other users</li>
+                <li>Not share copyrighted content without permission</li>
+                <li>Use the platform for its intended purpose of recipe sharing</li>
+            </ul>
+            <p>We reserve the right to moderate content and remove recipes that violate our community guidelines.</p>
+        </section>
+
+        <section id="contact-section" class="hidden">
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you! Get in touch with our team:</p>
+            <p>Email: contact@culinaryverse.com</p>
+            <p>Support: support@culinaryverse.com</p>
+            <p>Address: 123 Culinary Street, Food City, FC 12345</p>
+            <p>For technical issues, recipe submissions, or general inquiries, please don't hesitate to reach out.</p>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <a href="#" onclick="showAbout()">About Us</a>
+            <a href="#" onclick="showTerms()">Terms and Conditions</a>
+            <a href="#" onclick="showContact()">Contact Us</a>
+        </div>
+        <p>© 2024 CulinaryVerse. All rights reserved.</p>
+    </footer>
+
+    <!-- Modals -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('login-modal')">&times;</span>
+            <h3>Login</h3>
+            <form id="login-form">
+                <div>
+                    <label for="login-username">Username or Email</label>
+                    <input type="text" id="login-username">
+                </div>
+                <div>
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password">
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#"
+                        onclick="event.preventDefault(); closeModal('login-modal'); showModal('forgot-password-modal');"
+                        style="color: #ff6b35; text-decoration: none; font-size: 0.9rem;">Forgot Password?</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('register-modal')">&times;</span>
+            <h3>Register</h3>
+            <form id="register-form">
+                <div>
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username">
+                </div>
+                <div>
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email">
+                </div>
+                <div>
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password">
+                </div>
+                <div>
+                    <label for="register-role">Role</label>
+                    <select id="register-role">
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="add-recipe-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('add-recipe-modal')">&times;</span>
+            <h3>Add New Recipe</h3>
+            <form id="add-recipe-form">
+                <div>
+                    <label for="recipe-title">Title</label>
+                    <input type="text" id="recipe-title">
+                </div>
+                <div>
+                    <label for="recipe-category">Category</label>
+                    <select id="recipe-category">
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="recipe-ingredients">Ingredients</label>
+                    <textarea id="recipe-ingredients"></textarea>
+                </div>
+                <div>
+                    <label for="recipe-steps">Preparation Steps</label>
+                    <textarea id="recipe-steps"></textarea>
+                </div>
+                <div>
+                    <label for="recipe-cooking-time">Cooking Time (minutes)</label>
+                    <input type="number" id="recipe-cooking-time">
+                </div>
+                <div>
+                    <label for="recipe-image">Image (optional)</label>
+                    <input type="file" id="recipe-image" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Recipe</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="recipe-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('recipe-detail-modal')">&times;</span>
+            <h3 id="recipe-detail-title">Recipe Title</h3>
+            <div class="recipe-detail-image">
+                <img id="recipe-detail-image" alt="Recipe Image">
+            </div>
+            <div class="recipe-meta">
+                <span id="recipe-detail-category">Category: </span>
+                <span id="recipe-detail-cooking-time">Cooking Time: minutes</span>
+                <span id="recipe-detail-rating">Rating: ⭐ 0 (0 ratings)</span>
+                <span id="recipe-detail-author">Author: Unknown</span>
+            </div>
+            <div class="recipe-content">
+                <h4>Ingredients</h4>
+                <p id="recipe-detail-ingredients"></p>
+                <h4>Preparation Steps</h4>
+                <p id="recipe-detail-steps"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('forgot-password-modal')">&times;</span>
+            <h3>Forgot Password</h3>
+            <p style="text-align: center; color: #6c757d; margin-bottom: 20px;">Enter your email address and we'll send
+                you a password reset link.</p>
+            <form id="forgot-password-form">
+                <div>
+                    <label for="forgot-email">Email Address</label>
+                    <input type="email" id="forgot-email" required placeholder="your@email.com">
+                </div>
+                <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="#" onclick="event.preventDefault(); closeModal('forgot-password-modal'); showLogin();"
+                        style="color: #ff6b35; text-decoration: none; font-size: 0.9rem;">Back to Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reset Password Modal -->
+    <div id="reset-password-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('reset-password-modal')">&times;</span>
+            <h3>Reset Password</h3>
+            <p style="text-align: center; color: #6c757d; margin-bottom: 20px;">Enter your new password below.</p>
+            <form id="reset-password-form">
+                <input type="hidden" id="reset-token">
+                <div>
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" required
+                        placeholder="At least 6 characters with letters and numbers">
+                    <small class="filter-hint" style="margin-top: 5px;">Must be at least 6 characters with letters and
+                        numbers</small>
+                </div>
+                <div>
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" id="confirm-password" required placeholder="Re-enter your new password">
+                </div>
+                <button type="submit" class="btn btn-primary">Reset Password</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>
